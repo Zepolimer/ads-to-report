@@ -2,6 +2,29 @@
 
 Use GoogleAds API to fetch campaigns and keywords then make recommendations based on metrics using algorithm or chatGPT
 
+## Install dependencies
+```commandline
+pip3 install -r requirements.txt
+```
+
+## Create settings.py file in ads-to-report
+```python
+CLIENT_ID='YOUR_CLIENT_ID'
+CLIENT_SECRET='YOUR_CLIENT_SECRET'
+DEVELOPER_TOKEN='YOUR_DEVELOPER_TOKEN'
+REFRESH_TOKEN='YOUR_REFRESH_TOKEN'
+
+CUSTOMER_ID='YOUR_CUSTOMER_ID'
+ACCOUNT_ID=0000000000
+
+OPEN_API_KEY='YOUR_OPEN_API_KEY'
+```
+
+## Launch metrics recommendations
+```commandline
+python3 main.py
+```
+
 <br/>
 
 ### Conseils pour optimiser les campagnes en fonction de ses métriques
