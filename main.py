@@ -1,11 +1,13 @@
 from pprint import pprint
 
 import settings
-from src.analyzer import MetricAnalyser
 from src.google.metrics import GoogleAdsClient
 
+from src.analyzer import MetricAnalyser
+from src.extractor import Extractor
 
-def main():
+
+def from_api():
     client = GoogleAdsClient(
         client_id=settings.CLIENT_ID,
         client_secret=settings.CLIENT_SECRET,
@@ -29,5 +31,18 @@ def main():
     # )
 
 
+def from_csv():
+    extractor = Extractor()
+
+    with (open('csv/campaigns.csv', 'r') as csv_file):
+        extractor.get_campaigns(csv=csv_file)
+
+    with (open('csv/keywords.csv', 'r') as csv_file):
+        extractor.get_keywords(csv=csv_file)
+
+    pprint(extractor.campaigns)
+
+
 if __name__ == '__main__':
-    main()
+    # from_api()
+    from_csv()
