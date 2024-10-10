@@ -11,21 +11,20 @@ class OpenAiClient:
     def __init__(self):
         self.client =  OpenAI(api_key=settings.OPEN_API_KEY)
 
-    def generate_strategy(self, account_id, campaign_metrics, keyword_metrics):
+    def generate_strategy(self, account_id, campaign_metrics):
         print("ChatGPT is reading campaigns and keywords...\n")
         strategies = []
 
         for campaign in campaign_metrics:
-            campaign_name = re.sub(r'[^a-zA-Z/]', '', campaign['name']).replace('/', '_').lower()
+            if campaign['name'] is not None:
+                campaign_name = re.sub(r'[^a-zA-Z/]', '', campaign['name']).replace('/', '_').lower()
 
-            prompt = f"""    
-                J'ai besoin que tu me sortes les KPI principaux de la campagne :
+            prompt = f"""
+                J'ai besoin que tu me sortes les KPI principaux de la campagne.
+                Si elle contient des keywords, effectue en plus une analyse et des insights :
                 {json.dumps(campaign, indent=2)}
 
-                J'ai besoin d'une analyse et d'insights sur les mots-clés suivants :
-                {json.dumps(keyword_metrics, indent=2)}
-
-                Et avec tout ceci, fais-moi un bilan avec des recommandations synthétiques au format Markdown dont la structure est la suivante : 
+                Et avec tout ceci, fais-moi un bilan avec des recommandations synthétiques au format Markdown dont la structure est la suivante :
                 # Nom de la Campagne
 
                 ## Analyse des Performances

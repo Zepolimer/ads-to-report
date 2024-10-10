@@ -1,10 +1,12 @@
-from pprint import pprint
-
 import settings
+from datetime import datetime, timedelta
+
 from src.google.metrics import GoogleAdsClient
 
 from src.analyzer import MetricAnalyser
 from src.extractor import Extractor
+
+from src.openai import OpenAiClient
 
 
 def from_api():
@@ -15,19 +17,21 @@ def from_api():
         refresh_token=settings.REFRESH_TOKEN,
     )
 
+    metrics_from = datetime.now()
+    metrics_to = metrics_from - timedelta(days=60)
+    print(metrics_from)
+    print(metrics_to)
+
     metrics = client.get_metrics(
         account_id=settings.ACCOUNT_ID
     )
 
     analyzer = MetricAnalyser(metrics=metrics)
-    recommendations = analyzer.get_recommendations()
-
-    pprint(recommendations)
+    analyzer.get_recommendations()
 
     # OpenAiClient().generate_strategy(
-    #     account_id=metrics['account_id'],
-    #     campaign_metrics=metrics['campaigns'],
-    #     keyword_metrics=metrics['keywords']
+    #     account_id='gse',
+    #     campaign_metrics=analyzer.metrics,
     # )
 
 
@@ -40,9 +44,12 @@ def from_csv():
     with (open('csv/keywords.csv', 'r') as csv_file):
         extractor.get_keywords(csv=csv_file)
 
-    pprint(extractor.campaigns)
+    OpenAiClient().generate_strategy(
+        account_id='nom_client',
+        campaign_metrics=extractor.campaigns,
+    )
 
 
 if __name__ == '__main__':
-    # from_api()
-    from_csv()
+    from_api()
+    # from_csv()

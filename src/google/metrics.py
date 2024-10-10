@@ -2,7 +2,7 @@ from datetime import datetime
 
 from google.ads.googleads.client import GoogleAdsClient as GAC
 from google.ads.googleads.errors import GoogleAdsException
-from google.ads.googleads.v15.errors.types.authorization_error import AuthorizationErrorEnum
+from google.ads.googleads.v17.errors.types.authorization_error import AuthorizationErrorEnum
 
 import settings
 
@@ -43,7 +43,7 @@ class GoogleAdsClient:
         if metrics_from and metrics_to:
             fmt = '%Y-%m-%d'
             return f" AND segments.date BETWEEN '{metrics_from.strftime(fmt)}' AND '{metrics_to.strftime(fmt)}'"
-        return f" AND segments.date DURING LAST_30_DAYS"
+        return f" AND segments.date DURING LAST_MONTH"
 
     def do_call(self, account_id, query):
         try:
@@ -71,7 +71,8 @@ class GoogleAdsClient:
                 metrics.cost_micros,
                 metrics.impressions,
                 metrics.cost_per_conversion,
-                metrics.current_model_attributed_conversions_value_per_cost
+                metrics.current_model_attributed_conversions_value_per_cost,
+                segments.date
             FROM campaign
             WHERE campaign.status = 'ENABLED'
                 AND metrics.cost_micros > 0
@@ -86,6 +87,7 @@ class GoogleAdsClient:
 
             metrics.append({
                 'id': row.campaign.id,
+                'date': row.segments.date,
                 'name': row.campaign.name,
                 'cost': row.metrics.cost_micros / self.COST_RATE,
                 'impressions': row.metrics.impressions,
